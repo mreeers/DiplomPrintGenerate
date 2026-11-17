@@ -1,0 +1,29 @@
+## Visual Studio & Build Outputs
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+build/
+*.user
+*.userprefs
+*.suo
+*.ide/
+.vs/
+
+## Logs and Runtime Diagnostics
+logs/
+screenshots/
+*.log
+
+## OS Generated Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+## Temporary Files
+*.tmp
+*~
