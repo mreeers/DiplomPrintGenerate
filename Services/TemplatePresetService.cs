@@ -62,7 +62,7 @@ namespace DiplomPrintGenerate.Services
             return result.OrderBy(p => p.Title).ToList();
         }
 
-        public static void SavePreset(string title, BitmapSource image, double canvasW, double canvasH, IEnumerable<FieldDefinition> fields, double? v1 = null, double? v2 = null, double? h1 = null, double? h2 = null, bool showCustomGuides = false)
+        public static void SavePreset(string title, BitmapSource image, double canvasW, double canvasH, IEnumerable<FieldDefinition> fields, double? v1 = null, double? v2 = null, double? h1 = null, double? h2 = null, bool showCustomGuides = false, Dictionary<string, string> customFields = null, IEnumerable<double> verticalGuides = null, IEnumerable<double> horizontalGuides = null)
         {
             if (string.IsNullOrWhiteSpace(title))
                 title = "Шаблон " + DateTime.Now.ToString("yyyy-MM-dd_HH-mm");
@@ -84,13 +84,23 @@ namespace DiplomPrintGenerate.Services
                 CanvasWidth = canvasW,
                 CanvasHeight = canvasH,
                 ImageBase64 = imageBase64,
-                Fields = fields != null ? new List<FieldDefinition>(fields) : new List<FieldDefinition>(),
+                Fields = fields != null ? new List<FieldDefinition>(fields.Select(f => f.Clone())) : new List<FieldDefinition>(),
+                CustomFields = customFields != null ? new Dictionary<string, string>(customFields) : new Dictionary<string, string>(),
                 CustomGuideV1 = v1,
                 CustomGuideV2 = v2,
                 CustomGuideH1 = h1,
                 CustomGuideH2 = h2,
                 ShowCustomGuides = showCustomGuides
             };
+
+            if (verticalGuides != null)
+            {
+                preset.VerticalGuides = new List<double>(verticalGuides);
+            }
+            if (horizontalGuides != null)
+            {
+                preset.HorizontalGuides = new List<double>(horizontalGuides);
+            }
 
             string json = Serializer.Serialize(preset);
             File.WriteAllText(fullPath, json, System.Text.Encoding.UTF8);

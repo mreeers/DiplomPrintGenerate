@@ -287,7 +287,8 @@ namespace DiplomPrintGenerate
                 IsBold = true,
                 Alignment = TextAlignment.Center,
                 TextColorHex = "#182B49",
-                AutoShrink = true
+                AutoShrink = true,
+                IsCustom = false
             });
 
             _fields.Add(new FieldDefinition
@@ -304,7 +305,8 @@ namespace DiplomPrintGenerate
                 IsItalic = true,
                 Alignment = TextAlignment.Center,
                 TextColorHex = "#CDA04B",
-                AutoShrink = true
+                AutoShrink = true,
+                IsCustom = false
             });
 
             _fields.Add(new FieldDefinition
@@ -320,7 +322,8 @@ namespace DiplomPrintGenerate
                 IsBold = true,
                 Alignment = TextAlignment.Center,
                 TextColorHex = "#182B49",
-                AutoShrink = true
+                AutoShrink = true,
+                IsCustom = false
             });
 
             _fields.Add(new FieldDefinition
@@ -336,7 +339,8 @@ namespace DiplomPrintGenerate
                 IsBold = false,
                 Alignment = TextAlignment.Left,
                 TextColorHex = "#475569",
-                AutoShrink = true
+                AutoShrink = true,
+                IsCustom = false
             });
         }
 
@@ -1058,10 +1062,27 @@ namespace DiplomPrintGenerate
                 }
 
                 // Restore custom guides
-                if (preset.CustomGuideV1.HasValue) _customGuideV1 = preset.CustomGuideV1.Value;
-                if (preset.CustomGuideV2.HasValue) _customGuideV2 = preset.CustomGuideV2.Value;
-                if (preset.CustomGuideH1.HasValue) _customGuideH1 = preset.CustomGuideH1.Value;
-                if (preset.CustomGuideH2.HasValue) _customGuideH2 = preset.CustomGuideH2.Value;
+                if (preset.VerticalGuides != null && preset.VerticalGuides.Count > 0)
+                {
+                    _customGuideV1 = preset.VerticalGuides[0];
+                    if (preset.VerticalGuides.Count > 1) _customGuideV2 = preset.VerticalGuides[1];
+                }
+                else
+                {
+                    if (preset.CustomGuideV1.HasValue) _customGuideV1 = preset.CustomGuideV1.Value;
+                    if (preset.CustomGuideV2.HasValue) _customGuideV2 = preset.CustomGuideV2.Value;
+                }
+
+                if (preset.HorizontalGuides != null && preset.HorizontalGuides.Count > 0)
+                {
+                    _customGuideH1 = preset.HorizontalGuides[0];
+                    if (preset.HorizontalGuides.Count > 1) _customGuideH2 = preset.HorizontalGuides[1];
+                }
+                else
+                {
+                    if (preset.CustomGuideH1.HasValue) _customGuideH1 = preset.CustomGuideH1.Value;
+                    if (preset.CustomGuideH2.HasValue) _customGuideH2 = preset.CustomGuideH2.Value;
+                }
                 _showCustomGuides = preset.ShowCustomGuides;
                 BtnToggleCustomGuides.IsChecked = _showCustomGuides;
                 CustomGuidesCanvas.Visibility = _showCustomGuides ? Visibility.Visible : Visibility.Collapsed;
@@ -1194,7 +1215,7 @@ namespace DiplomPrintGenerate
             }
         }
 
-        private void AddNewField(string name, string sample, double y, double fontSize, bool isBold, bool isItalic, TextAlignment align, string colorHex)
+        private void AddNewField(string name, string sample, double y, double fontSize, bool isBold, bool isItalic, TextAlignment align, string colorHex, bool isCustom = false)
         {
             var field = new FieldDefinition
             {
@@ -1210,7 +1231,8 @@ namespace DiplomPrintGenerate
                 IsItalic = isItalic,
                 Alignment = align,
                 TextColorHex = colorHex,
-                AutoShrink = true
+                AutoShrink = true,
+                IsCustom = isCustom
             };
 
             _fields.Add(field);
@@ -1244,7 +1266,10 @@ namespace DiplomPrintGenerate
         private void BtnAddField_Custom_Click(object sender, RoutedEventArgs e)
         {
             int index = _fields.Count + 1;
-            AddNewField("Поле_" + index, "Текст поля " + index, 500, 22, false, false, TextAlignment.Center, "#1A202C");
+            double targetY = Math.Min(DesignerCanvas.Height - 120, 200 + ((_fields.Count % 8) * 65));
+            AddNewField("Поле_" + index, "Текст поля " + index, targetY, 22, false, false, TextAlignment.Center, "#1A202C", isCustom: true);
+            PropName.Focus();
+            PropName.SelectAll();
         }
 
         #endregion
@@ -2294,10 +2319,27 @@ namespace DiplomPrintGenerate
                 }
 
                 // Restore custom guides
-                if (proj.CustomGuideV1.HasValue) _customGuideV1 = proj.CustomGuideV1.Value;
-                if (proj.CustomGuideV2.HasValue) _customGuideV2 = proj.CustomGuideV2.Value;
-                if (proj.CustomGuideH1.HasValue) _customGuideH1 = proj.CustomGuideH1.Value;
-                if (proj.CustomGuideH2.HasValue) _customGuideH2 = proj.CustomGuideH2.Value;
+                if (proj.VerticalGuides != null && proj.VerticalGuides.Count > 0)
+                {
+                    _customGuideV1 = proj.VerticalGuides[0];
+                    if (proj.VerticalGuides.Count > 1) _customGuideV2 = proj.VerticalGuides[1];
+                }
+                else
+                {
+                    if (proj.CustomGuideV1.HasValue) _customGuideV1 = proj.CustomGuideV1.Value;
+                    if (proj.CustomGuideV2.HasValue) _customGuideV2 = proj.CustomGuideV2.Value;
+                }
+
+                if (proj.HorizontalGuides != null && proj.HorizontalGuides.Count > 0)
+                {
+                    _customGuideH1 = proj.HorizontalGuides[0];
+                    if (proj.HorizontalGuides.Count > 1) _customGuideH2 = proj.HorizontalGuides[1];
+                }
+                else
+                {
+                    if (proj.CustomGuideH1.HasValue) _customGuideH1 = proj.CustomGuideH1.Value;
+                    if (proj.CustomGuideH2.HasValue) _customGuideH2 = proj.CustomGuideH2.Value;
+                }
                 _showCustomGuides = proj.ShowCustomGuides;
                 BtnToggleCustomGuides.IsChecked = _showCustomGuides;
                 CustomGuidesCanvas.Visibility = _showCustomGuides ? Visibility.Visible : Visibility.Collapsed;

@@ -22,6 +22,8 @@ namespace DiplomPrintGenerate.Models
         private string _textColorHex;
         private string _sampleText;
         private bool _autoShrink;
+        private bool _isCustom;
+        private System.Collections.Generic.Dictionary<string, string> _customAttributes;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -143,9 +145,21 @@ namespace DiplomPrintGenerate.Models
             set { if (_autoShrink != value) { _autoShrink = value; OnPropertyChanged("AutoShrink"); } }
         }
 
+        public bool IsCustom
+        {
+            get => _isCustom;
+            set { if (_isCustom != value) { _isCustom = value; OnPropertyChanged("IsCustom"); } }
+        }
+
+        public System.Collections.Generic.Dictionary<string, string> CustomAttributes
+        {
+            get => _customAttributes ?? (_customAttributes = new System.Collections.Generic.Dictionary<string, string>());
+            set { _customAttributes = value; OnPropertyChanged("CustomAttributes"); }
+        }
+
         public FieldDefinition Clone()
         {
-            return new FieldDefinition
+            var clone = new FieldDefinition
             {
                 Id = Guid.NewGuid().ToString("N"),
                 Name = this.Name + " (копия)",
@@ -160,8 +174,14 @@ namespace DiplomPrintGenerate.Models
                 Alignment = this.Alignment,
                 TextColorHex = this.TextColorHex,
                 SampleText = this.SampleText,
-                AutoShrink = this.AutoShrink
+                AutoShrink = this.AutoShrink,
+                IsCustom = this.IsCustom
             };
+            if (this._customAttributes != null)
+            {
+                clone.CustomAttributes = new System.Collections.Generic.Dictionary<string, string>(this._customAttributes);
+            }
+            return clone;
         }
 
         protected void OnPropertyChanged(string propName)
